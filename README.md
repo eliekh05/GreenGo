@@ -1,7 +1,3 @@
-Let me check the MapView.swift for what features it actually has:Got everything I need. Here is the updated README:
-
----
-
 # GreenGo 🌿
 
 An eco-friendly travel app for iOS built with SwiftUI, Swift 6, and iOS 26.
