@@ -45,7 +45,7 @@ Just build and run. Do not open, probe, or interact with the backend in any way 
 If sounds glitch while your phone is not on silent, that is not a bug. iOS has audio session limits and an incoming call or a burst of rapid news notifications can interrupt playback. That is a system-level limitation, not something the app controls.
 
 ### Android
-The Android version is coming but may take a while. Android Studio alone requires around 20 GB of downloads just to get set up, on top of runtimes, emulators, and actual device testing. It will be released when it is properly ready.
+The Android version is coming but may take a while. Android Studio with runtimes, sdks, adb, emulators, and actual device testing requires around 20 GB. It will be released when it is properly ready.
 
 ### Tested Devices
 The app has been tested on:
