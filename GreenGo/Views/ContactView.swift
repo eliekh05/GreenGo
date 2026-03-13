@@ -168,7 +168,11 @@ struct ContactView: View {
 // MARK: - SupabaseMailer
 
 enum SupabaseMailer {
-    let publishableKey = ProcessInfo.processInfo.environment["SUPABASE_KEY"] ?? ""
+    guard let baseURL = ProcessInfo.processInfo.environment["SUPABASE_URL"],
+          let functionPath = ProcessInfo.processInfo.environment["SUPABASE_FUNCTION_SEND_EMAIL"],
+          let url = URL(string: baseURL + functionPath) else {
+                                                              return "Invalid URL"
+          }
 
     /// Returns nil on success, error string on failure.
     static func send(replyTo: String, subject: String, message: String) async -> String? {
