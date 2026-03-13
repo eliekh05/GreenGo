@@ -13,7 +13,7 @@ struct ContactView: View {
     @State private var isSending    = false
 
     private let green     = Color(red: 0.08, green: 0.52, blue: 0.10)
-    private let toAddress = "" // TODO: Add your contact email
+    private let toAddress = "greengo.customerfeedback@gmail.com"
 
     private func sanitize(_ raw: String) -> String {
         var s = raw
@@ -168,8 +168,8 @@ struct ContactView: View {
 // MARK: - SupabaseMailer
 
 enum SupabaseMailer {
-    private static let functionURL = "" // TODO: Add your own Supabase Edge Function URL
-    private static let publishableKey = "" // TODO: Add your own Supabase publishable key
+    private static let functionURL = "https://sjsjagoqzjvgsiyejial.supabase.co/functions/v1/send-email"
+    private static let publishableKey = "sb_publishable_fbfUw36cqPdExnkaHxxtBw_Kfx9Sj5L"
 
     /// Returns nil on success, error string on failure.
     static func send(replyTo: String, subject: String, message: String) async -> String? {

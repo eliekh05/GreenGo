@@ -20,7 +20,7 @@ An eco-friendly travel app for iOS built with SwiftUI, Swift 6, and iOS 26.
 - Xcode 26+
 - iOS 26+
 - Swift 6
-- Free Apple Developer account (see Publishing section below)
+- See publishing section below
 
 ---
 

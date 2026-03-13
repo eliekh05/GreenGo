@@ -190,7 +190,7 @@ final class PlacesScraper {
         if let url = comps.url,
            let (data, _) = try? await session.data(for: {
                var r = URLRequest(url: url)
-               r.setValue("GreenGo/1.0 (iOS)", forHTTPHeaderField: "User-Agent")
+               r.setValue("GreenGo/1.0 (iOS; contact: greengo.customerfeedback@gmail.com)", forHTTPHeaderField: "User-Agent")
                return r
            }()) {
             struct NReverse: Decodable { let extratags: [String: String]? }
@@ -229,7 +229,7 @@ final class EcoMapLoader: ObservableObject {
         cfg.timeoutIntervalForResource = 90
         return URLSession(configuration: cfg)
     }()
-    private let userAgent = "GreenGo/1.0 (iOS)"
+    private let userAgent = "GreenGo/1.0 (iOS; contact: greengo.customerfeedback@gmail.com)"
 
     func load(lat: Double, lon: Double, radiusKm: Double,
               categories: [MarkerCategory] = MarkerCategory.allCases) async {
