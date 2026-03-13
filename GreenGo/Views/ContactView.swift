@@ -14,7 +14,6 @@ struct ContactView: View {
 
     private let green     = Color(red: 0.08, green: 0.52, blue: 0.10)
     private let toAddress = "greengo.customerfeedback@gmail.com"
-
     private func sanitize(_ raw: String) -> String {
         var s = raw
         if let re = try? NSRegularExpression(pattern: "<[^>]*>", options: []) {
@@ -168,15 +167,11 @@ struct ContactView: View {
 // MARK: - SupabaseMailer
 
 enum SupabaseMailer {
+    private static let functionURL = "https://sjsjagoqzjvgsiyejial.supabase.co/functions/v1/send-email"
+    private static let publishableKey = "https://sjsjagoqzjvgsiyejial.supabase.co" 
     /// Returns nil on success, error string on failure.
     static func send(replyTo: String, subject: String, message: String) async -> String? {
-
-        // Access environment variables at runtime inside the function
-        guard let baseURL = ProcessInfo.processInfo.environment["SUPABASE_URL"],
-              let functionPath = ProcessInfo.processInfo.environment["SUPABASE_FUNCTION_SEND_EMAIL"],
-              let url = URL(string: baseURL + functionPath) else {
-            return "Invalid URL"
-        }
+        guard let url = URL(string: functionURL) else { return "Invalid URL" }
 
         let payload: [String: String] = [
             "replyTo":  replyTo,
@@ -190,20 +185,18 @@ enum SupabaseMailer {
 
         var request = URLRequest(url: url, timeoutInterval: 15)
         request.httpMethod = "POST"
-        request.httpBody = body
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        // Read publishable key at runtime as well
-        let publishableKey = ProcessInfo.processInfo.environment["SUPABASE_PUBLISHABLE_KEY"] ?? ""
-        request.setValue("Bearer \(publishableKey)", forHTTPHeaderField: "Authorization")
+        request.httpBody   = body
+        request.setValue("application/json",    forHTTPHeaderField: "Content-Type")
+        request.setValue(publishableKey,        forHTTPHeaderField: "Authorization")
 
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
             let status = (response as? HTTPURLResponse)?.statusCode ?? 0
             if status == 200 { return nil }
-
-            if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
-                return json["error"] as? String ?? json["message"] as? String
+            // Parse error message from response
+            if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+               let msg = json["error"] as? String {
+                return msg
             }
             return "Server error (\(status))"
         } catch {
