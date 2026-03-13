@@ -169,7 +169,7 @@ struct ContactView: View {
 
 enum SupabaseMailer {
     private static let functionURL = "https://sjsjagoqzjvgsiyejial.supabase.co/functions/v1/send-email"
-    private static let publishableKey = "sb_publishable_fbfUw36cqPdExnkaHxxtBw_Kfx9Sj5L"
+    let publishableKey = ProcessInfo.processInfo.environment["SUPABASE_KEY"] ?? ""
 
     /// Returns nil on success, error string on failure.
     static func send(replyTo: String, subject: String, message: String) async -> String? {
@@ -189,16 +189,15 @@ enum SupabaseMailer {
         request.httpMethod = "POST"
         request.httpBody   = body
         request.setValue("application/json",    forHTTPHeaderField: "Content-Type")
-        request.setValue(publishableKey,        forHTTPHeaderField: "Authorization")
+        request.setValue("Bearer \(publishableKey)", forHTTPHeaderField: "Authorization")
 
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
             let status = (response as? HTTPURLResponse)?.statusCode ?? 0
             if status == 200 { return nil }
             // Parse error message from response
-            if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-               let msg = json["error"] as? String {
-                return msg
+            if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                return json["error"] as? String ?? json["message"] as? String
             }
             return "Server error (\(status))"
         } catch {
