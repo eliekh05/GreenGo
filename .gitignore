@@ -27,3 +27,7 @@ Thumbs.db
 
 # Credentials — never commit these
 # Supabase keys, Gmail passwords, etc. should be in environment variables
+
+# Environment Files
+.env
+.env.*
