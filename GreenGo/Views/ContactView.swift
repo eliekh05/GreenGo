@@ -168,7 +168,6 @@ struct ContactView: View {
 // MARK: - SupabaseMailer
 
 enum SupabaseMailer {
-    private static let functionURL = "https://sjsjagoqzjvgsiyejial.supabase.co/functions/v1/send-email"
     let publishableKey = ProcessInfo.processInfo.environment["SUPABASE_KEY"] ?? ""
 
     /// Returns nil on success, error string on failure.
