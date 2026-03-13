@@ -168,15 +168,15 @@ struct ContactView: View {
 // MARK: - SupabaseMailer
 
 enum SupabaseMailer {
-    guard let baseURL = ProcessInfo.processInfo.environment["SUPABASE_URL"],
-          let functionPath = ProcessInfo.processInfo.environment["SUPABASE_FUNCTION_SEND_EMAIL"],
-          let url = URL(string: baseURL + functionPath) else {
-                                                              return "Invalid URL"
-          }
-
     /// Returns nil on success, error string on failure.
     static func send(replyTo: String, subject: String, message: String) async -> String? {
-        guard let url = URL(string: functionURL) else { return "Invalid URL" }
+
+        // Access environment variables at runtime inside the function
+        guard let baseURL = ProcessInfo.processInfo.environment["SUPABASE_URL"],
+              let functionPath = ProcessInfo.processInfo.environment["SUPABASE_FUNCTION_SEND_EMAIL"],
+              let url = URL(string: baseURL + functionPath) else {
+            return "Invalid URL"
+        }
 
         let payload: [String: String] = [
             "replyTo":  replyTo,
@@ -190,15 +190,18 @@ enum SupabaseMailer {
 
         var request = URLRequest(url: url, timeoutInterval: 15)
         request.httpMethod = "POST"
-        request.httpBody   = body
-        request.setValue("application/json",    forHTTPHeaderField: "Content-Type")
+        request.httpBody = body
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        // Read publishable key at runtime as well
+        let publishableKey = ProcessInfo.processInfo.environment["SUPABASE_PUBLISHABLE_KEY"] ?? ""
         request.setValue("Bearer \(publishableKey)", forHTTPHeaderField: "Authorization")
 
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
             let status = (response as? HTTPURLResponse)?.statusCode ?? 0
             if status == 200 { return nil }
-            // Parse error message from response
+
             if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
                 return json["error"] as? String ?? json["message"] as? String
             }
