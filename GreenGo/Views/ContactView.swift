@@ -126,11 +126,6 @@ struct ContactView: View {
 
         isSending = true
         Task {
-            let error = await SupabaseMailer.send(
-                replyTo: from,
-                subject: subject.isEmpty ? "GreenGo Feedback" : String(subject.prefix(200)),
-                message: message
-            )
             isSending = false
             if let reason = error {
                 alertMessage = "Could not send your message (\(reason)). Please try again or email \(toAddress) directly."
@@ -160,47 +155,6 @@ struct ContactView: View {
                             in: RoundedRectangle(cornerRadius: 10))
                 .foregroundStyle(appState.theme.text)
                 .shadow(color: .black.opacity(0.05), radius: 3)
-        }
-    }
-}
-
-// MARK: - SupabaseMailer
-
-enum SupabaseMailer {
-    private static let functionURL = "https://sjsjagoqzjvgsiyejial.supabase.co/functions/v1/send-email"
-    private static let publishableKey = "sb_publishable_fbfUw36cqPdExnkaHxxtBw_Kfx9Sj5L" 
-    /// Returns nil on success, error string on failure.
-    static func send(replyTo: String, subject: String, message: String) async -> String? {
-        guard let url = URL(string: functionURL) else { return "Invalid URL" }
-
-        let payload: [String: String] = [
-            "replyTo":  replyTo,
-            "subject":  subject,
-            "message":  message,
-        ]
-
-        guard let body = try? JSONSerialization.data(withJSONObject: payload) else {
-            return "Failed to encode request"
-        }
-
-        var request = URLRequest(url: url, timeoutInterval: 15)
-        request.httpMethod = "POST"
-        request.httpBody   = body
-        request.setValue("application/json",    forHTTPHeaderField: "Content-Type")
-        request.setValue(publishableKey,        forHTTPHeaderField: "Authorization")
-
-        do {
-            let (data, response) = try await URLSession.shared.data(for: request)
-            let status = (response as? HTTPURLResponse)?.statusCode ?? 0
-            if status == 200 { return nil }
-            // Parse error message from response
-            if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-               let msg = json["error"] as? String {
-                return msg
-            }
-            return "Server error (\(status))"
-        } catch {
-            return error.localizedDescription
         }
     }
 }
