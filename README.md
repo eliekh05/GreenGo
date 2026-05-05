@@ -53,6 +53,8 @@ If sounds glitch while your phone is not on silent, that is not a bug. iOS has a
 
 Android is in separate repo because of inconsistent services and architecture with android devices and tools (gradle, android studio, simulators) and architecture of android development industry and will break with iOS Swift 6 and Xcode if android does like iOS will be better instead of 100 lines of imports would be one 1 line or a file filled with all the imports and linked to the file 
 
+---
+
 ### Tested Devices
 The app has been tested on:
 - iPhone 17 Pro Max
