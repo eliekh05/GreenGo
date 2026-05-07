@@ -51,7 +51,7 @@ If sounds glitch while your phone is not on silent, that is not a bug. iOS has a
 
 ## Why Android is in separate repo:
 
-Android is in separate repo because of inconsistent services and architecture with android devices and tools (gradle, android studio, simulators) and architecture of android development industry and will break with iOS Swift 6 and Xcode if android does like iOS will be better instead of 100 lines of imports would be one 1 line or a file filled with all the imports and linked to the file 
+Android lives in its own repository because the two platforms have fundamentally different toolchains that cannot coexist cleanly in a single project. iOS uses Xcode, Swift 6, and Apple frameworks. Android uses Android Studio, Kotlin, and Gradle. Mixing them in one repo would cause build system conflicts and make both sides harder to maintain. Beyond tooling, the architecture is different at every level — navigation, UI, permissions, sensors, audio, and networking all work differently on Android. Rather than forcing iOS patterns into an Android codebase (which leads to bloated import files and brittle code), each platform is built natively with the conventions that actually make sense for it. The result is cleaner, more stable code on both sides. 
 
 ---
 
