@@ -167,8 +167,8 @@ struct ContactView: View {
 // MARK: - SupabaseMailer
 
 enum SupabaseMailer {
-    private static let functionURL = "https://sjsjagoqzjvgsiyejial.supabase.co/functions/v1/send-email"
-    private static let publishableKey = "sb_publishable_fbfUw36cqPdExnkaHxxtBw_Kfx9Sj5L"
+    private static let functionURL = "https://ifwtwgjvbtrsyhaxutfv.supabase.co/functions/v1/send-email"
+    private static let publishableKey = "sb_publishable_isKG2lyUokBWoWX25B2Gfw_BVA21zPL"
     /// Returns nil on success, error string on failure.
     static func send(replyTo: String, subject: String, message: String) async -> String? {
         guard let url = URL(string: functionURL) else { return "Invalid URL" }
