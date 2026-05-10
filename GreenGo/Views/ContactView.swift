@@ -126,7 +126,7 @@ struct ContactView: View {
 
         isSending = true
         Task {
-            let error = await SupabaseMailer.send(
+            let error = await DenoMailer.send(
                 replyTo: from,
                 subject: subject.isEmpty ? "GreenGo Feedback" : String(subject.prefix(200)),
                 message: message
@@ -164,19 +164,18 @@ struct ContactView: View {
     }
 }
 
-// MARK: - SupabaseMailer
+// MARK: - DenoMailer
 
-enum SupabaseMailer {
-    private static let functionURL = "https://ifwtwgjvbtrsyhaxutfv.supabase.co/functions/v1/send-email"
-    private static let publishableKey = "sb_publishable_isKG2lyUokBWoWX25B2Gfw_BVA21zPL"
-    /// Returns nil on success, error string on failure.
+enum DenoMailer {
+    private static let functionURL = "https://greengo.greengo.deno.net"
+
     static func send(replyTo: String, subject: String, message: String) async -> String? {
         guard let url = URL(string: functionURL) else { return "Invalid URL" }
 
         let payload: [String: String] = [
-            "replyTo":  replyTo,
-            "subject":  subject,
-            "message":  message,
+            "replyTo": replyTo,
+            "subject": subject,
+            "message": message,
         ]
 
         guard let body = try? JSONSerialization.data(withJSONObject: payload) else {
@@ -186,14 +185,12 @@ enum SupabaseMailer {
         var request = URLRequest(url: url, timeoutInterval: 15)
         request.httpMethod = "POST"
         request.httpBody   = body
-        request.setValue("application/json",    forHTTPHeaderField: "Content-Type")
-        request.setValue(publishableKey,        forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
             let status = (response as? HTTPURLResponse)?.statusCode ?? 0
             if status == 200 { return nil }
-            // Parse error message from response
             if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
                let msg = json["error"] as? String {
                 return msg
